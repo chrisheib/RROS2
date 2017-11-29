@@ -3,7 +3,7 @@ using System.Collections;
 
 public class WallTileScript : MonoBehaviour {
 
-	public string type = "WallTile";
+	public bool inMiningQueue = false;
 
 	// Use this for initialization
 	void Start () {
