@@ -10,10 +10,10 @@ public class MovementOrder{
 
 public class MiningOrder{
 
-	public WallTileScript target;
+	public WallTile target;
 
 	//Toolrequirementcheck etc
-	public MiningOrder(WallTileScript target){
+	public MiningOrder(WallTile target){
 		this.target = target;
 	}
 
@@ -36,11 +36,11 @@ public class WorkerQuad{
 public class GameControl : MonoBehaviour {
 
 	public GameObject wallPrefab;
-	public GameObject floorPrefab;
+	//public GameObject floorPrefab;
 	public GameObject wallWithEnergyCrystalPrefab;
 	public GameObject[,] map = new GameObject[50,50];
-	public GameObject floor;
-	public GameObject player;
+	//public GameObject floor;
+	public GameObject mainWorker;
 
 	int freeWorkerCount = 0;
 
@@ -51,21 +51,16 @@ public class GameControl : MonoBehaviour {
 		for (int i = 0; i < map.GetLength(0); i++) {
 			for (int j = 0; j < map.GetLength(1); j++) {
 				bool willBeFloorTile = (Random.value < 0.2);
-				if (willBeFloorTile) {
-					//map[i,j] = (GameObject)	Instantiate (floorPrefab, new Vector3 (i + 0.5f, 0, j + 0.5f), Quaternion.identity);
-				} else {
-					float distanceFromPlayer = (player.transform.position - new Vector3 (i + 0.5f, 0, j + 0.5f)).magnitude;
-					bool isFarEnoughFromPlayer = distanceFromPlayer > 3;
-					if (!isFarEnoughFromPlayer) {
+				if (!willBeFloorTile) {
+					float distanceFromMainWorker = (mainWorker.transform.position - new Vector3 (i + 0.5f, 0, j + 0.5f)).magnitude;
+					if (distanceFromMainWorker < 3) {
 						continue;
 					}
 					bool hasEnergyCrystal = (Random.value < 0.05);
 					if (!hasEnergyCrystal) {
-						//map[i,j] = (GameObject)	Instantiate (wallPrefab, new Vector3 (i + 0.5f, 0, j + 0.5f), Quaternion.identity, floor.transform);
-						map[i,j] = (GameObject)	Instantiate (wallPrefab, new Vector3 (i + 0.5f, 0, j + 0.5f), Quaternion.identity);
+						map[i,j] = (GameObject)	Instantiate (wallPrefab, new Vector3 (i + 0.5f, 0.5f, j + 0.5f), Quaternion.identity);
 					} else {
-						//map[i,j] = (GameObject)	Instantiate (wallWithEnergyCrystalPrefab, new Vector3 (i + 0.5f, 0, j + 0.5f), Quaternion.identity, floor.transform);
-						map[i,j] = (GameObject)	Instantiate (wallWithEnergyCrystalPrefab, new Vector3 (i + 0.5f, 0, j + 0.5f), Quaternion.identity);
+						map[i,j] = (GameObject)	Instantiate (wallWithEnergyCrystalPrefab, new Vector3 (i + 0.5f, 0.5f, j + 0.5f), Quaternion.identity);
 					}
 				}
 			}
@@ -82,7 +77,7 @@ public class GameControl : MonoBehaviour {
 		for (int i = 0; (i < miningOrders.Count) && (freeWorkerCount > 0); i++) {
 
 			if (miningOrders.Count > 0) {
-				WallTileScript target = miningOrders [i].target;
+				WallTile target = miningOrders [i].target;
 				List<Worker> freeWorkers = findFreeWorkers ();
 
 				List<WorkerQuad> workerDistanceList = new List<WorkerQuad>();
@@ -99,8 +94,10 @@ public class GameControl : MonoBehaviour {
 					UnityEngine.AI.NavMeshPath path;
 					UnityEngine.AI.NavMeshAgent agent = worker.navAgent;
 					float shortestDistance;
+					//Debug.Log ("finding path to tile!");
 					bool pathFound = findShortestPathToTile(agent, target.transform.position, out path, out shortestDistance);
 					if (pathFound) {
+						//Debug.Log ("Path found! Worker: " + agent.gameObject.name);
 						workerDistanceList.Add (new WorkerQuad(worker,agent,shortestDistance, path));
 						viableWorkerFound = true;
 					}
@@ -108,6 +105,7 @@ public class GameControl : MonoBehaviour {
 
 				//if no viable worker is found, check next miningOrder
 				if (!viableWorkerFound) {
+					//Debug.Log ("no worker found, skipping miningOrder " + i.ToString ());
 					continue;
 					//cant be reached :( delete from order list. 
 
@@ -140,7 +138,7 @@ public class GameControl : MonoBehaviour {
 	}
 
 	public void addMiningOrder(MiningOrder miningOrder){
-		WallTileScript wall = miningOrder.target;
+		WallTile wall = miningOrder.target;
 		if (wall.inMiningQueue) {
 			Debug.Log ("Already in mining queue");
 			return;
@@ -187,20 +185,21 @@ public class GameControl : MonoBehaviour {
 	}
 
 	public bool findShortestPathToTile(UnityEngine.AI.NavMeshAgent agent, Vector3 position, out UnityEngine.AI.NavMeshPath path, out float shortestDistance){
+
 		//Try to find a path
 		UnityEngine.AI.NavMeshPath[] paths = new UnityEngine.AI.NavMeshPath[4];
 		paths[0] = new UnityEngine.AI.NavMeshPath();
 		paths[1] = new UnityEngine.AI.NavMeshPath();
 		paths[2] = new UnityEngine.AI.NavMeshPath();
 		paths[3] = new UnityEngine.AI.NavMeshPath();
-		//Debug.Log (agent.gameObject.transform.position);
-		//Debug.Log (objectHit.transform.position);
+//		Debug.Log (agent.gameObject.transform.position);
+//		Debug.Log (position);
 
-		//do 4 times: Calc path to offseted target, check if complete, return shortest 
-		agent.CalculatePath(new Vector3(position.x+0.5f,position.y,position.z), paths[0]);
-		agent.CalculatePath(new Vector3(position.x,position.y,position.z+0.5f), paths[1]);
-		agent.CalculatePath(new Vector3(position.x+0.5f,position.y,position.z+1f), paths[2]);
-		agent.CalculatePath(new Vector3(position.x+1f,position.y,position.z+0.5f), paths[3]);
+		//Calc paths to offseted target, check if complete, return shortest 
+		agent.CalculatePath(new Vector3(position.x,0,position.z+0.6f), paths[0]); //oben links
+		agent.CalculatePath(new Vector3(position.x,0,position.z-0.6f), paths[1]); //unten rechts
+		agent.CalculatePath(new Vector3(position.x+0.6f,0,position.z), paths[2]); //oben rechts
+		agent.CalculatePath(new Vector3(position.x-0.6f,0,position.z), paths[3]); //unten links
 
 		shortestDistance = Mathf.Infinity;
 		int shortestIndex = 0;
@@ -208,7 +207,7 @@ public class GameControl : MonoBehaviour {
 		for (int i = 0; i < 4; i++) {
 			if (paths [i].status == UnityEngine.AI.NavMeshPathStatus.PathComplete) {
 				float thisDistance = PathLength (paths [i]);
-				//Debug.Log ("Path " + (i.ToString()) + " is viable. Length: " + thisDistance.ToString());
+				Debug.Log ("Path " + (i.ToString()) + " is viable. Length: " + thisDistance.ToString());
 				if (thisDistance < shortestDistance) {
 					shortestDistance = thisDistance;
 					shortestIndex = i;

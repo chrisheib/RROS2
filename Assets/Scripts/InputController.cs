@@ -47,11 +47,11 @@ public class InputController : MonoBehaviour {
 			Camera camera = Camera.main;
 			Ray ray = camera.ScreenPointToRay (Input.mousePosition);
 			if (Physics.Raycast(ray, out hit)) {
-				GameObject objectHit = hit.transform.parent.gameObject;
+				GameObject objectHit = hit.transform.gameObject;
 				Debug.Log ("hit" + hit.transform.position.ToString());
 
 				//if (objectHit.CompareTag("WallTile")) {
-				WallTileScript wall = objectHit.GetComponent<WallTileScript>();
+				WallTile wall = objectHit.GetComponent<WallTile>();
 				if (wall){
 					Debug.Log ("is wall tile");
 					gameControl.addMiningOrder(new MiningOrder(wall));
