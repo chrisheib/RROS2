@@ -109,9 +109,6 @@ public class GameControl : MonoBehaviour {
 					continue;
 					//cant be reached :( delete from order list. 
 
-					//miningOrders.RemoveAt(i);
-					//i--;
-
 				}
 
 				//if at least one worker is found, select the one who is closest to target

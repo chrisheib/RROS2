@@ -19,6 +19,5 @@ public class WallTile : MonoBehaviour {
 			ownRenderer.material = matWhenInQueue;
 			materialSet = true;
 		}
-	
 	}
 }

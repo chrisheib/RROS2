@@ -10,12 +10,8 @@ public class InputController : MonoBehaviour {
 
 	Vector3 targetPosition;
 	GameObject targetObject;
-	//UnityEngine.AI.NavMeshAgent agent;
-	//enum NavStatus {noAction, calculatingPath, movingAlongPath};
-	//NavStatus mainNavStatus = NavStatus.noAction;
 
 	void Start(){
-		//agent = GameObject.FindWithTag("Worker").GetComponentInChildren<UnityEngine.AI.NavMeshAgent>();
 		gameControl = FindObjectOfType<GameControl> ();
 	}
 
@@ -50,22 +46,10 @@ public class InputController : MonoBehaviour {
 				GameObject objectHit = hit.transform.gameObject;
 				Debug.Log ("hit" + hit.transform.position.ToString());
 
-				//if (objectHit.CompareTag("WallTile")) {
 				WallTile wall = objectHit.GetComponent<WallTile>();
 				if (wall){
 					Debug.Log ("is wall tile");
 					gameControl.addMiningOrder(new MiningOrder(wall));
-
-
-					//move
-					//UnityEngine.AI.NavMeshPath path;
-					//if (findShortestPathToTile(agent,objectHit.transform.position,out path)) {
-					//	agent.path = path;
-					//	targetObject = objectHit;
-					//	//Debug.Log (objectHit.name);
-					//	mainNavStatus = NavStatus.movingAlongPath;	
-					//}
-					//mine (objectHit);
 				}
 			}
 		}
