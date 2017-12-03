@@ -49,7 +49,9 @@ public class InputController : MonoBehaviour {
 				WallTile wall = objectHit.GetComponent<WallTile>();
 				if (wall){
 					Debug.Log ("is wall tile");
-					gameControl.addMiningOrder(new MiningOrder(wall));
+					if (wall.isMinable) {
+						gameControl.addMiningOrder(new MiningOrder(wall));	 
+					}
 				}
 			}
 		}

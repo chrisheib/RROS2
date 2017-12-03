@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnergyCrystalTile : MonoBehaviour {
+public class EnergyCrystalTile : WallTile {
 
-	public string type = "EnergyCrystalTile";
 	// Use this for initialization
 	void Start () {
 	
+		isMinable = false;
+
 	}
 	
 	// Update is called once per frame

@@ -38,6 +38,7 @@ public class GameControl : MonoBehaviour {
 	public GameObject wallPrefab;
 	//public GameObject floorPrefab;
 	public GameObject wallWithEnergyCrystalPrefab;
+	public GameObject indestructibleWalltilePrefab;
 	public GameObject[,] map = new GameObject[50,50];
 	//public GameObject floor;
 	public GameObject mainWorker;
@@ -63,8 +64,43 @@ public class GameControl : MonoBehaviour {
 						map[i,j] = (GameObject)	Instantiate (wallWithEnergyCrystalPrefab, new Vector3 (i + 0.5f, 0.5f, j + 0.5f), Quaternion.identity);
 					}
 				}
+
+				if (i == 0 && j == 0) {
+					Instantiate (indestructibleWalltilePrefab, new Vector3 (i - 0.5f, 0.5f, j - 0.5f), Quaternion.identity);
+				}
+
+				if (i == 0 && j == map.GetLength(1) - 1) {
+					Instantiate (indestructibleWalltilePrefab, new Vector3 (i - 0.5f, 0.5f, j + 1.5f), Quaternion.identity);
+				}
+
+				if (i == map.GetLength(0) - 1 && j == 0) {
+					Instantiate (indestructibleWalltilePrefab, new Vector3 (i + 1.5f, 0.5f, j - 0.5f), Quaternion.identity);
+				}
+
+				if (i == map.GetLength(0) - 1 && j == map.GetLength(1) - 1) {
+					Instantiate (indestructibleWalltilePrefab, new Vector3 (i + 1.5f, 0.5f, j + 1.5f), Quaternion.identity);
+				}
+
+				if (i == 0) {
+					Instantiate (indestructibleWalltilePrefab, new Vector3 (i - 0.5f, 0.5f, j + 0.5f), Quaternion.identity);
+				}
+
+				if (i == map.GetLength(0) - 1) {
+					Instantiate (indestructibleWalltilePrefab, new Vector3 (i + 1.5f, 0.5f, j + 0.5f), Quaternion.identity);
+				}
+
+				if (j == 0) {
+					Instantiate (indestructibleWalltilePrefab, new Vector3 (i + 0.5f, 0.5f, j - 0.5f), Quaternion.identity);
+				}
+
+				if (j == map.GetLength(1) - 1) {
+					Instantiate (indestructibleWalltilePrefab, new Vector3 (i + 0.5f, 0.5f, j + 1.5f), Quaternion.identity);
+				}
 			}
 		}
+
+
+
 	}
 
 	void FixedUpdate () {

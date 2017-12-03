@@ -5,16 +5,19 @@ public class WallTile : MonoBehaviour {
 
 	public bool inMiningQueue = false;
 	public Material matWhenInQueue;
+
+	public bool isMinable;
+
 	Renderer ownRenderer;
 	bool materialSet = false;
 
 	// Use this for initialization
-	void Start () {
+	protected void Start () {
 		ownRenderer = GetComponent<Renderer> ();
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	protected void Update () {
 		if (inMiningQueue && !materialSet) {
 			ownRenderer.material = matWhenInQueue;
 			materialSet = true;
